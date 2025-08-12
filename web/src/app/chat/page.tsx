@@ -25,6 +25,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
   const [input, setInput] = useState("")
   const [isSending, setIsSending] = useState(false)
+  const [typing, setTyping] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export default function ChatPage() {
 
     // UI-only simulated assistant reply (no backend)
     setIsSending(true)
+    setTyping(true)
     const reply: ChatMessage = {
       id: crypto.randomUUID(),
       role: "assistant",
@@ -55,6 +57,7 @@ export default function ChatPage() {
     setTimeout(() => {
       setMessages((prev) => [...prev, reply])
       setIsSending(false)
+      setTyping(false)
     }, 600)
   }
 
@@ -75,11 +78,27 @@ export default function ChatPage() {
 
       {/* Message list */}
       <div ref={scrollRef} className="px-4 pb-40 pt-4 space-y-3 h-[calc(100vh-9rem)] overflow-y-auto">
-        {messages.map((m) => (
-          <Bubble key={m.id} role={m.role}>
-            {m.content}
-          </Bubble>
+        {groupMessages(messages).map((group) => (
+          <div key={group.key} className="space-y-1">
+            {group.items.map((m, idx) => (
+              <Bubble key={m.id} role={m.role} first={idx === 0} last={idx === group.items.length - 1}>
+                {m.content}
+              </Bubble>
+            ))}
+          </div>
         ))}
+
+        {typing && (
+          <div className="flex w-full justify-start">
+            <div className="rounded-2xl px-3 py-2 bg-gray-900 border border-gray-800">
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-bounce [animation-delay:0ms]"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-bounce [animation-delay:150ms]"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-bounce [animation-delay:300ms]"></span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Quick prompts */}
         <div className="mt-4 flex flex-wrap gap-2">
@@ -139,22 +158,43 @@ export default function ChatPage() {
   )
 }
 
-function Bubble({ role, children }: { role: ChatMessage["role"]; children: React.ReactNode }) {
+function Bubble({ role, children, first, last }: { role: ChatMessage["role"]; children: React.ReactNode; first?: boolean; last?: boolean }) {
   const isUser = role === "user"
   return (
     <div className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}>
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed",
+          "max-w-[85%] px-3 py-2 text-sm leading-relaxed",
           isUser
             ? "bg-white text-black border border-white/10"
             : "bg-gray-900 text-gray-100 border border-gray-800",
+          // group rounding
+          first && last
+            ? "rounded-2xl"
+            : first
+            ? "rounded-2xl rounded-b-md"
+            : last
+            ? "rounded-2xl rounded-t-md"
+            : "rounded-md",
         )}
       >
         {children}
       </div>
     </div>
   )
+}
+
+function groupMessages(items: ChatMessage[]) {
+  const groups: { key: string; items: ChatMessage[] }[] = []
+  for (const msg of items) {
+    const last = groups[groups.length - 1]
+    if (last && last.items[last.items.length - 1].role === msg.role) {
+      last.items.push(msg)
+    } else {
+      groups.push({ key: `g-${groups.length}`, items: [msg] })
+    }
+  }
+  return groups
 }
 
  

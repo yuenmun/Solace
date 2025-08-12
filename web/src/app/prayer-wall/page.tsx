@@ -1,3 +1,5 @@
+"use client"
+import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Users, Heart, Clock } from "lucide-react"
@@ -9,7 +11,7 @@ type PrayerRequest = {
   prayers: number
 }
 
-const demoRequests: PrayerRequest[] = [
+const initialRequests: PrayerRequest[] = [
   {
     id: "p-1",
     body:
@@ -33,6 +35,10 @@ const demoRequests: PrayerRequest[] = [
 ]
 
 export default function PrayerWallPage() {
+  const [open, setOpen] = useState(false)
+  const [text, setText] = useState("")
+  const [list, setList] = useState<PrayerRequest[]>(initialRequests)
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
@@ -47,8 +53,8 @@ export default function PrayerWallPage() {
           </div>
         </div>
         <div className="flex items-center gap-2 mt-3">
-          <Button className="bg-white/10 hover:bg-white/20 text-white" disabled>
-            Share a request (UI only)
+          <Button className="border border-primary/40 text-primary hover:bg-primary/10" onClick={() => setOpen(true)}>
+            Share a request
           </Button>
           <Button variant="ghost" className="text-gray-400" disabled>
             Most recent
@@ -61,10 +67,13 @@ export default function PrayerWallPage() {
 
       {/* Feed */}
       <div className="px-4 py-6 pb-28 space-y-6">
-        {demoRequests.map((r) => (
-          <Card key={r.id} className="bg-gray-900 border-gray-800 p-4 shadow-sm">
+        {list.map((r, idx) => (
+          <Card key={r.id} className={`p-4 shadow-sm border ${idx % 2 ? "bg-gray-900 border-gray-800" : "bg-gray-950 border-gray-900"}`}>
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[10px] rounded-full px-2 py-0.5 border border-gray-700 text-gray-400">approved</span>
+                </div>
                 <p className="text-sm text-gray-200 leading-relaxed line-clamp-4">{r.body}</p>
                 <div className="mt-3 flex items-center gap-4 text-xs text-gray-500">
                   <span className="inline-flex items-center gap-1">
@@ -84,6 +93,36 @@ export default function PrayerWallPage() {
           </Card>
         ))}
       </div>
+
+      {open && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center sm:justify-center p-4 z-50">
+          <div className="w-full sm:max-w-md rounded-xl border border-gray-800 bg-gray-900 p-4 space-y-3">
+            <h2 className="text-base font-medium">Share a Request</h2>
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={5}
+              placeholder="Write a short, anonymous prayer request…"
+              className="w-full rounded-md bg-black/30 border border-gray-800 p-2 outline-none text-sm text-white placeholder:text-gray-500"
+            />
+            <div className="flex items-center justify-end gap-2 pt-1">
+              <Button variant="ghost" className="text-gray-400" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button
+                className="border border-primary/40 text-primary hover:bg-primary/10"
+                onClick={() => {
+                  if (!text.trim()) return
+                  setList([{ id: crypto.randomUUID(), body: text.trim(), minutesAgo: 0, prayers: 0 }, ...list])
+                  setText("")
+                  setOpen(false)
+                }}
+              >
+                Submit (UI only)
+              </Button>
+            </div>
+            <p className="text-[10px] text-gray-500">Requests are anonymous and will appear as pending for moderation in production.</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
