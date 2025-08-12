@@ -34,7 +34,7 @@ export default function MemoryPage() {
       </div>
 
       {/* Grid */}
-      <div className="px-4 py-4 pb-28 grid grid-cols-1 gap-3">
+      <div className="px-4 py-6 pb-28 grid grid-cols-1 gap-6">
         {demoBoxes.map((box) => (
           <Card key={box.id} className="bg-gray-900 border-gray-800 overflow-hidden">
             <div className="h-28 bg-gradient-to-r from-gray-800 to-gray-700 flex items-center justify-center">
@@ -51,7 +51,7 @@ export default function MemoryPage() {
                 <div className="text-xs text-gray-400">{box.entries} entries</div>
               </div>
               <div className="mt-3">
-                <Button variant="outline" className="border-gray-700 text-gray-200 hover:bg-white/5" disabled>
+                <Button variant="outline" className="border-primary/40 text-primary hover:bg-primary/10" disabled>
                   Open (UI only)
                 </Button>
               </div>

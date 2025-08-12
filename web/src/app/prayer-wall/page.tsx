@@ -60,7 +60,7 @@ export default function PrayerWallPage() {
       </div>
 
       {/* Feed */}
-      <div className="px-4 py-4 pb-28 space-y-3">
+      <div className="px-4 py-6 pb-28 space-y-6">
         {demoRequests.map((r) => (
           <Card key={r.id} className="bg-gray-900 border-gray-800 p-4">
             <div className="flex items-start justify-between gap-3">
@@ -76,7 +76,7 @@ export default function PrayerWallPage() {
                 </div>
               </div>
               <div className="shrink-0">
-                <Button className="bg-white/10 hover:bg-white/20 text-white" disabled>
+                <Button className="border border-primary/40 text-primary hover:bg-primary/10" disabled>
                   I am praying for you
                 </Button>
               </div>

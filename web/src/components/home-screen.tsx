@@ -61,7 +61,7 @@ export function HomeScreen() {
       </div>
 
       {/* Content */}
-      <div className="px-6 space-y-4 pb-24">
+      <div className="px-6 space-y-6 pb-24">
         {/* Daily Reminder */}
         {showReminder && (
           <Card className="bg-gray-900 border-gray-800 p-4">
@@ -98,7 +98,7 @@ export function HomeScreen() {
 
             <h2 className="text-xl font-semibold mb-4 text-white">How are you feeling today? I&apos;m here to listen.</h2>
 
-            <Button className="bg-white/10 hover:bg-white/20 text-white border-0 rounded-full w-12 h-12 p-0 backdrop-blur-sm">
+            <Button className="border border-primary/40 text-primary hover:bg-primary/10 rounded-full w-12 h-12 p-0 backdrop-blur-sm">
               <ArrowRight className="w-5 h-5" />
             </Button>
           </Card>
