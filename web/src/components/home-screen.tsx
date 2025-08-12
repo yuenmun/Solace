@@ -41,7 +41,9 @@ export function HomeScreen() {
               <span className="text-xs text-gray-500 mb-2">{day}</span>
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-sm ${
-                  index === 3 ? "bg-primary text-black" : "bg-gray-800 text-gray-400"
+                  index === 3
+                    ? "bg-primary text-black"
+                    : "bg-gray-800 text-gray-400 border border-primary/30"
                 }`}
               >
                 {index + 3}
