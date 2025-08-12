@@ -1,0 +1,150 @@
+# Solace — Cursor Rules
+
+Purpose: Shared conventions and constraints for building Solace using Cursor. These rules guide AI edits, human reviews, and overall code quality. Keep this aligned with `docs/PRD.md`.
+
+
+## 1) Product and Mission
+- Build a gentle, mobile-first, biblically grounded grief support web app.
+- Prioritize empathy, privacy, clarity, and accessibility (WCAG 2.2 AA).
+- MVP features: AI Companion, Memory Boxes, Prayer Wall, Journeys, Words of Hope.
+
+
+## 2) Tech Stack and Tooling
+- Framework: Next.js 14 (App Router), React 18, TypeScript.
+- Styling: Tailwind CSS + shadcn/ui.
+- Backend: Supabase (Auth, Postgres, Storage, Edge Functions), strict RLS.
+- Payments: Stripe Checkout + Webhooks.
+- Analytics: PostHog or Supabase events (no sensitive content).
+- AI: Server-side only; LLM via API route or Supabase Edge Function with safety checks.
+- Lint/Format: ESLint + Prettier; import sorting.
+- Tests: Vitest or Jest + React Testing Library (as available).
+
+
+## 3) Directory Structure (expected)
+- `app/` — routes using App Router; isolated route groups allowed.
+- `components/` — reusable UI.
+- `lib/` — helpers (supabase client, zod schemas, utils, analytics).
+- `db/` — sql policies/migrations (if storing in repo), seed scripts.
+- `styles/` — global.css and design tokens.
+- `public/` — static assets.
+- `docs/` — PRD, rules, architecture notes.
+
+
+## 4) TypeScript and Coding Style
+- Enable strict mode; avoid `any`. Prefer precise domain types.
+- Use meaningful names; avoid abbreviations and 1–2 letter identifiers.
+- Prefer early returns; shallow nesting; handle error/edge cases first.
+- Do not catch errors without handling; surface clear user-safe messages.
+- Keep functions small and cohesive; avoid side effects in pure utilities.
+- Use Zod for input validation of all external inputs (HTTP, forms, webhooks).
+
+
+## 5) Next.js Conventions
+- Server-first: put data fetching in Server Components or server actions.
+- Do not expose secrets in Client Components. Use server-only helpers in `lib/server/*`.
+- Use route handlers under `app/api/*` for backend logic; employ RLS and additional checks.
+- Prefer streaming and suspense for chat where appropriate; handle loading states.
+- Implement PWA basics (manifest, icons) and good performance defaults.
+
+
+## 6) Supabase & Data Access
+- Use Supabase Auth. Derive `user_id` from auth context server-side; never trust client IDs.
+- RLS is required on all tables. Assume no row is accessible without a policy.
+- Use row ownership patterns consistently: `owner_id = auth.uid()` for private rows.
+- For public/anonymous content (Prayer Wall), only show approved rows via policy.
+- Use short-lived signed URLs for Storage assets; never expose bucket publicly by default.
+- Keep Prisma out of scope for MVP; use `@supabase/supabase-js` types for queries.
+
+
+## 7) Security, Privacy, and Safety
+- Do not log PII, chat content, or journal text to analytics or logs.
+- Strip/avoid PII in Prayer Wall submissions; enforce moderation queue.
+- AI must not provide medical/legal advice or assert God’s specific will for events.
+- Add crisis resource footer if self-harm indicators are detected.
+- Use rate limiting and per-user quotas to prevent abuse.
+
+
+## 8) AI Companion Rules
+- Single server-side chat endpoint enforces:
+  - subscription/usage limits
+  - safety classification (pre/post)
+  - scripture accuracy and references
+- System prompt: compassionate Christian helper; biblically grounded; short, gentle tone.
+- Response shape: validate feelings → verse(s) with translation → brief context → application → optional prayer.
+- Translation: use WEB (public domain) at launch; clearly label.
+
+
+## 9) UI/UX Guidelines
+- Mobile-first layouts; bottom nav; large tap targets; readable typography.
+- Respect reduced motion; provide focus states; maintain color contrast.
+- Tone: warm, pastoral, non-judgmental, never trite.
+- Empty states should comfort and orient, not pressure.
+
+
+## 10) Payments and Monetization
+- Free tier: limited monthly chats, one Memory Box, Prayer Wall view-only, limited topics.
+- Premium: unlimited chats/boxes, Prayer Wall posting + pray action, all journeys, full topics, audio.
+- Enforce via Stripe status mirrored to `subscriptions` table; gate client UI and server checks.
+
+
+## 11) Events and Observability
+- Instrument high-level events only (counts and clicks, not content):
+  - chat_started, chat_reply_received, chat_prayer_requested
+  - memory_box_created, journal_entry_added
+  - prayer_request_submitted/approved, prayer_supported
+  - journey_started, journey_day_completed
+  - topic_viewed, verse_favorited
+  - subscription_purchased/canceled
+- Use feature flags sparingly; prefer simple config for MVP.
+
+
+## 12) Env Vars and Secrets (reference)
+- Required (names may change):
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  - `SUPABASE_SERVICE_ROLE_KEY` (server only)
+  - `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` (server only)
+  - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+  - `NEXT_PUBLIC_POSTHOG_KEY` (optional)
+- Never expose service keys to the client. Use server-only modules.
+
+
+## 13) Testing and QA
+- Unit test critical helpers (formatting, parsing, quotas) with Vitest/Jest.
+- Minimal end-to-end flows with Playwright (login, chat, create memory, prayer post view).
+- Add RLS tests for read/write constraints where possible.
+
+
+## 14) Commit, PR, and Review Process
+- Use Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`
+- Small, focused PRs with a brief description and acceptance criteria check.
+- Review checklist:
+  - Does it align with `docs/PRD.md`?
+  - Any secrets on client? Any PII in logs?
+  - RLS enforced? Zod validation present?
+  - Accessible UI (labels, contrast, focus, keyboard)?
+  - Performance (bundle size, lazy-load large deps)?
+
+
+## 15) Cursor Collaboration Norms
+- When asking Cursor to edit code:
+  - Specify exact file paths and the minimal diff.
+  - Keep unrelated code untouched; avoid broad refactors in the same edit.
+  - Include all needed imports when adding new components/APIs.
+  - After edits, run lints/tests and fix errors before moving on.
+- When generating code that touches data:
+  - Assume RLS is active; test with real auth context.
+  - Validate inputs with Zod; sanitize text inputs.
+
+
+## 16) Out of Scope for MVP
+- Native mobile apps; deep study tools; public share cards; complex social graph.
+
+
+## 17) References
+- Product: `docs/PRD.md`
+- Legal: `/app/legal/*`
+- Theming and UI: `/styles/*`, `components/*`
+- Data: Supabase schema in `docs/PRD.md` (Data Model section)
+
+

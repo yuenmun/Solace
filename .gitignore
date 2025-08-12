@@ -1,0 +1,30 @@
+# Node
+node_modules/
+.next/
+.turbo/
+pnpm-lock.yaml
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Editor
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+out/
+
+# Misc
+dev.log
+
