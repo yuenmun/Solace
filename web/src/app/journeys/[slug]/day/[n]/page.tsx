@@ -1,11 +1,18 @@
 "use client"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { getCompletedDays, setCompletedDays } from "@/lib/client-storage"
 
 export default function JourneyDayPage() {
   const { slug, n } = useParams() as { slug: string; n: string }
+  const dayNum = Number(n)
+  const [completed, setCompleted] = useState<number[]>([])
+  useEffect(() => {
+    setCompleted(getCompletedDays(slug))
+  }, [slug])
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="px-6 pt-12 pb-4">
@@ -33,8 +40,15 @@ export default function JourneyDayPage() {
           </p>
         </Card>
         <div className="pt-2">
-          <Button className="border border-primary/40 text-primary hover:bg-primary/10" disabled>
-            Mark Day Complete (UI only)
+          <Button
+            className="border border-primary/40 text-primary hover:bg-primary/10"
+            onClick={() => {
+              const next = [...new Set([...completed, dayNum])]
+              setCompleted(next)
+              setCompletedDays(slug, next)
+            }}
+          >
+            {completed.includes(dayNum) ? "Completed" : "Mark Day Complete (UI-only)"}
           </Button>
         </div>
       </div>
