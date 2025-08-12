@@ -36,7 +36,7 @@ export default function MemoryPage() {
       {/* Grid */}
       <div className="px-4 py-6 pb-28 grid grid-cols-1 gap-6">
         {demoBoxes.map((box) => (
-          <Card key={box.id} className="bg-gray-900 border-gray-800 overflow-hidden">
+          <Card key={box.id} className="bg-gray-900 border-gray-800 overflow-hidden shadow-sm">
             <div className="h-28 bg-gradient-to-r from-gray-800 to-gray-700 flex items-center justify-center">
               <ImageIcon className="w-6 h-6 text-gray-400" />
             </div>

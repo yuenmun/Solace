@@ -41,7 +41,7 @@ export function HomeScreen() {
               <span className="text-xs text-gray-500 mb-2">{day}</span>
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-sm ${
-                  index === 3 ? "bg-white text-black" : "bg-gray-800 text-gray-400"
+                  index === 3 ? "bg-primary text-black" : "bg-gray-800 text-gray-400"
                 }`}
               >
                 {index + 3}
@@ -86,7 +86,7 @@ export function HomeScreen() {
         )}
 
         {/* AI Companion Card */}
-        <Link href="/chat">
+        <Link href="/chat" className="block">
           <Card className="bg-gradient-to-br from-gray-900 via-gray-800 to-black border-gray-700 p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export function HomeScreen() {
         </Link>
 
         {/* Memory Box */}
-        <Link href="/memory">
+        <Link href="/memory" className="block">
           <Card className="bg-gradient-to-r from-gray-900 to-gray-800 border-gray-700 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -121,7 +121,7 @@ export function HomeScreen() {
         </Link>
 
         {/* Prayer Journey */}
-        <Link href="/journeys">
+        <Link href="/journeys" className="block">
           <Card className="bg-gradient-to-r from-black via-gray-900 to-gray-800 border-gray-700 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -137,7 +137,7 @@ export function HomeScreen() {
         </Link>
 
         {/* Words of Hope */}
-        <Link href="/words-of-hope">
+        <Link href="/words-of-hope" className="block">
           <Card className="bg-gray-900 border-gray-800 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

@@ -62,7 +62,7 @@ export default function PrayerWallPage() {
       {/* Feed */}
       <div className="px-4 py-6 pb-28 space-y-6">
         {demoRequests.map((r) => (
-          <Card key={r.id} className="bg-gray-900 border-gray-800 p-4">
+          <Card key={r.id} className="bg-gray-900 border-gray-800 p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
                 <p className="text-sm text-gray-200 leading-relaxed line-clamp-4">{r.body}</p>
